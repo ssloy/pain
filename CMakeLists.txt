@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.14...3.26)
+
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT is_multi_config AND NOT (CMAKE_BUILD_TYPE OR DEFINED ENV{CMAKE_BUILD_TYPE}))
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Release default")
+endif()
+
+project(pain LANGUAGES CXX)
+
+enable_testing()
+
+option(PAIN_UNIT_TESTS "PAIN_UNIT_TESTS" OFF)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true)
+
+if(MSVC)
+  add_compile_options(/W4)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU|Intel")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+set(RELATIVE_BIN_DIR bin/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${RELATIVE_BIN_DIR}/)
+
+add_library(pain pain.h pain.cpp)
+target_include_directories(pain PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_property(TARGET pain PROPERTY SOVERSION 1.0)
+
+if (PAIN_UNIT_TESTS)
+  add_subdirectory(tests)
+endif()
+
+file(GENERATE OUTPUT .gitignore CONTENT "*")
