@@ -31,7 +31,7 @@ template<int N> struct Expansion {
     }
 
     constexpr void push_back(double x) noexcept {
-        assert(n < N-1);
+        assert(n < N);
         e[n++] = x;
     }
 
@@ -113,7 +113,6 @@ template <int N> void Expansion<N>::normalize() {
 
     if (q) push_back(q);
 }
-
 
 template<int N> Expansion<N> negate(const Expansion<N>& e) {
     Expansion<N> r = e;
